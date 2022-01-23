@@ -4,28 +4,53 @@ import CreateIcon from "@mui/icons-material/Create";
 import IconOption from "./IconOption";
 import Post from "./Post";
 import { db } from "../firebase";
+import {
+  doc,
+  setDoc,
+  getDocs,
+  collection,
+  query,
+  // orderBy,
+  serverTimestamp
+} from "firebase/firestore";
 import ImageIcon from "@mui/icons-material/Image";
 import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import CalendarViewDayIcon from "@mui/icons-material/CalendarViewDay";
 
 function Feed() {
+  const [input, setInput] = useState("");
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    db.collection("posts").onSnapshot((snapshot) => {
-      setPosts(
-        snapshot.docs.map((doc) => ({
-          id: doc.id,
-          data: doc.data()
-        }))
+    const queryDoc = async () => {
+      const postsQuery = query(
+        collection(db, "posts")
+        // orderBy("created", "desc")
       );
-    });
+      const querySnapshot = await getDocs(postsQuery);
+      querySnapshot.forEach((snap) => {
+        console.log(snap.data());
+        setPosts((prevState) => [...prevState, snap.data()]);
+      });
+    };
+    queryDoc();
   }, []);
 
-  const sendPost = (e) => {
+  const sendPost = async (e) => {
     e.preventDefault();
-    db.collection("posts").add();
+    const post = {
+      name: "Fadeel Gbaiye",
+      description: "this is a test",
+      message: input,
+      photoUrl: "",
+      timestamp: serverTimestamp()
+    };
+
+    const postRef = doc(db, "posts/data");
+    const p = await setDoc(postRef, post);
+
+    setInput("");
   };
 
   return (
@@ -34,7 +59,11 @@ function Feed() {
         <div className="feed__input">
           <CreateIcon />
           <form>
-            <input type="text" />
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              type="text"
+            />
             <button onClick={sendPost} hidden type="submit">
               Send
             </button>
@@ -53,7 +82,13 @@ function Feed() {
         </div>
       </div>
 
-      <Post />
+      {posts.map((post) => (
+        <Post
+          name={post.name}
+          description={post.description}
+          message={post.message}
+        />
+      ))}
     </div>
   );
 }
