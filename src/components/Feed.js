@@ -1,14 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Feed.css";
 import CreateIcon from "@mui/icons-material/Create";
 import IconOption from "./IconOption";
 import Post from "./Post";
+import { db } from "../firebase";
 import ImageIcon from "@mui/icons-material/Image";
 import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import CalendarViewDayIcon from "@mui/icons-material/CalendarViewDay";
 
 function Feed() {
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    db.collection("posts").onSnapshot((snapshot) => {
+      setPosts(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data()
+        }))
+      );
+    });
+  }, []);
+
+  const sendPost = (e) => {
+    e.preventDefault();
+    db.collection("posts").add();
+  };
+
   return (
     <div className="feed">
       <div className="feed__inputContainer">
@@ -16,7 +35,7 @@ function Feed() {
           <CreateIcon />
           <form>
             <input type="text" />
-            <button hidden type="submit">
+            <button onClick={sendPost} hidden type="submit">
               Send
             </button>
           </form>
