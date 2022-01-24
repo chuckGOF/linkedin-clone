@@ -7,15 +7,13 @@ import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import ChatIcon from "@mui/icons-material/Chat";
 import NotificationIcon from "@mui/icons-material/Notifications";
-import { logout, selectUser } from "../features/userSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../features/userSlice";
+import { useDispatch } from "react-redux";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 
 function Header() {
-	const user = useSelector(selectUser);
 	const dispatch = useDispatch();
-
 	const signout = () => {
 		dispatch(logout());
 		signOut(auth).then(() => {
@@ -42,15 +40,7 @@ function Header() {
 				<HeaderOption Icon={BusinessCenterIcon} title="Jobs" />
 				<HeaderOption Icon={ChatIcon} title="Messaging" />
 				<HeaderOption Icon={NotificationIcon} title="Notifications" />
-				<HeaderOption
-					onClick={signout}
-					avatar={
-						user
-							? user?.photoUrl
-							: "https://compassionate-leakey-e9b16b.netlify.app/images/IG_Sonny.jpeg"
-					}
-					title="me"
-				/>
+				<HeaderOption onClick={signout} avatar={true} title="me" />
 			</div>
 		</div>
 	);

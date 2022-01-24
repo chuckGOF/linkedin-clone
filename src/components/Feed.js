@@ -16,8 +16,12 @@ import ImageIcon from "@mui/icons-material/Image";
 import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import CalendarViewDayIcon from "@mui/icons-material/CalendarViewDay";
+import FlipMove from "react-flip-move";
+import { selectUser } from "../features/userSlice";
+import { useSelector } from "react-redux";
 
 function Feed() {
+	const user = useSelector(selectUser);
 	const [input, setInput] = useState("");
 	const [posts, setPosts] = useState([]);
 
@@ -47,10 +51,10 @@ function Feed() {
 		e.preventDefault();
 		const postCollection = collection(db, "posts");
 		await addDoc(postCollection, {
-			name: "Fadeel Gbaiye",
-			description: "this is a test",
+			name: user?.displayName,
+			description: user?.email,
 			message: input,
-			photoUrl: "",
+			photoUrl: user?.photoUrl || "",
 			timestamp: serverTimestamp(),
 		});
 
@@ -106,18 +110,23 @@ function Feed() {
 					message={post.data.message}
 				/>
 			))} */}
-
-			{posts.map(
-				({ pid, data: { name, description, message, photoUrl } }) => (
-					<Post
-						key={pid}
-						name={name}
-						description={description}
-						message={message}
-						photoUrl={[photoUrl]}
-					/>
-				)
-			)}
+			<FlipMove>
+				{posts.map(
+					// using destructuring method
+					({
+						pid,
+						data: { name, description, message, photoUrl },
+					}) => (
+						<Post
+							key={pid}
+							name={name}
+							description={description}
+							message={message}
+							photoUrl={photoUrl}
+						/>
+					)
+				)}
+			</FlipMove>
 		</div>
 	);
 }

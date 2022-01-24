@@ -23,10 +23,10 @@ function Login() {
 				if (userAuth) {
 					dispatch(
 						login({
-							email: userAuth.email,
-							uid: userAuth.uid,
-							displayName: userAuth.displayName,
-							photoUrl: userAuth.photoURL,
+							email: userAuth.user.email,
+							uid: userAuth.user.uid,
+							displayName: userAuth.user.displayName,
+							photoUrl: userAuth.user.photoURL,
 						})
 					);
 				}
@@ -34,11 +34,10 @@ function Login() {
 			.catch((error) => alert(error.message));
 	};
 
-	const register = () => {
-		// e.preventDefault()
+	const register = (e) => {
+		e.preventDefault();
 		createUserWithEmailAndPassword(auth, email, password)
 			.then((userAuth) => {
-				console.log(auth.currentUser);
 				if (userAuth) {
 					updateProfile(auth.currentUser, {
 						displayName: name,

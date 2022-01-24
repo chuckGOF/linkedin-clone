@@ -17,6 +17,7 @@ function App() {
 
 	useEffect(() => {
 		onAuthStateChanged(auth, (userAuth) => {
+			// console.log(userAuth);
 			if (userAuth) {
 				// user is logged in set state
 				dispatch(
@@ -32,20 +33,20 @@ function App() {
 				dispatch(logout());
 			}
 		});
-	}, [dispatch]);
+	}, []);
 
 	return (
 		<div className="app">
 			<Header />
 
-			{!user ? (
-				<Login />
-			) : (
+			{user ? (
 				<div className="app__body">
 					<Sidebar />
 					<Feed />
 					<Widget />
 				</div>
+			) : (
+				<Login />
 			)}
 		</div>
 	);
